@@ -206,7 +206,11 @@ function generatePieces() {
 
     pieceContainer.innerHTML = "";
 
-    for (let i = 0; i < 3; i++) {
+   for (
+    let i = 0;
+    i < 3;
+    i++
+) {
 
         const randomShape =
             SHAPES[
@@ -236,38 +240,23 @@ function generatePieces() {
 // DISPLAY PIECE
 // =========================
 
-function displayPiece(piece) {
+function displayPiece(piece){
 
-    const pieceElement =
-        document.createElement("div");
+    const pieceElement = document.createElement("div");
 
     pieceElement.classList.add("piece");
+    // create blocks here
 
-    pieceElement.dataset.id =
-        piece.id;
-
-    pieceElement.style.gridTemplateColumns =
-        `repeat(${piece.shape[0].length}, 1fr)`;
-
-    piece.shape.forEach(row => {
-
-        row.forEach(cell => {
-
-            const block =
-                document.createElement("div");
-
-            if (cell === 1) {
-
-                block.classList.add(
-                    "piece-cell"
-                );
-
-            }
-
-            pieceElement.appendChild(block);
-
-        });
-
+    // CLICK + DRAG HERE
+    pieceElement.addEventListener(
+        "pointerdown",
+        function(event){
+            selectedPiece = piece;
+            startDragging(event);
+        }
+    );
+    pieceContainer.appendChild(pieceElement);
+});
     });
 
     // Mouse + touch dragging
