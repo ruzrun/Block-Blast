@@ -471,35 +471,15 @@ function createDraggedPiece(piece){
 
 function moveDraggedPiece(event){
 
-
     if(!draggedElement) return;
 
 
-    let x;
-    let y;
-
-
-    if(event.touches){
-
-        x = event.touches[0].clientX;
-        y = event.touches[0].clientY;
-
-    }
-    else{
-
-        x = event.clientX;
-        y = event.clientY;
-
-    }
-
-
-
     draggedElement.style.left =
-        x + "px";
+        `${event.clientX - (dragOffsetX * 28)}px`;
 
 
     draggedElement.style.top =
-        y + "px";
+        `${event.clientY - (dragOffsetY * 28)}px`;
 
 }
 
