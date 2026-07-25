@@ -4,7 +4,7 @@ const POINTS_PER_BLOCK = 10;
 const gameBoard = document.getElementById("gameBoard");
 const pieceContainer = document.getElementById("pieceContainer");
 const scoreDisplay = document.getElementById("score");
-const comboDisplay = document.getElementById("combo");
+const comboDisplay = document.getElementById("combo"); 
 const gameMessage = document.getElementById("gameMessage");
 const restartButton = document.getElementById("restartButton");
 
