@@ -644,10 +644,25 @@ function placePiece(
 
 
     pieces =
-        pieces.filter(
-            p =>
+    pieces.filter(
+        p =>
             p.id !== piece.id
-        );
+    );
+
+
+// remove used piece from bottom
+
+const usedPiece =
+    document.querySelector(
+        `.piece[data-id="${piece.id}"]`
+    );
+
+
+if(usedPiece){
+
+    usedPiece.remove();
+
+}
 
 
 
