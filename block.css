@@ -408,3 +408,15 @@ button:active {
     }
 
 }
+
+.board-cell.ghost{
+
+    background:
+    rgba(250,147,199,0.5);
+
+
+    box-shadow:
+    0 0 10px
+    rgba(250,147,199,0.8);
+
+}
