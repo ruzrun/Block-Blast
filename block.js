@@ -23,6 +23,8 @@ let draggedElement = null;
 
 let gameOverState = false;
 
+let dragOffsetX = 0;
+let dragOffsetY = 0;
 
 // =========================
 // BLOCK SHAPES
