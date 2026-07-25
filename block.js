@@ -507,21 +507,27 @@ function stopDragging(event){
 
 
     const col =
-        Math.floor(
-            (event.clientX - boardRect.left)
-            /
-            cellSize
-        );
+Math.floor(
+(
+event.clientX -
+boardRect.left -
+(dragOffsetX * cellSize)
+)
+/
+cellSize
+);
 
 
-
-    const row =
-        Math.floor(
-            (event.clientY - boardRect.top)
-            /
-            cellSize
-        );
-
+const row =
+Math.floor(
+(
+event.clientY -
+boardRect.top -
+(dragOffsetY * cellSize)
+)
+/
+cellSize
+);
 
 
     if(
