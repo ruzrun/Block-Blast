@@ -272,16 +272,34 @@ function displayPiece(piece) {
 
     // Mouse + touch dragging
     pieceElement.addEventListener(
-        "pointerdown",
-        startDragging
-    );
+    "pointerdown",
+    function(event) {
 
-    pieceContainer.appendChild(
-        pieceElement
-    );
+        event.preventDefault();
 
-}
+        selectedPiece = piece;
 
+
+        document
+        .querySelectorAll(".piece")
+        .forEach(
+            element => {
+                element.classList.remove(
+                    "selected"
+                );
+            }
+        );
+
+
+        pieceElement.classList.add(
+            "selected"
+        );
+
+
+        startDragging(event);
+
+    }
+);
 
 // =========================
 // START DRAGGING
