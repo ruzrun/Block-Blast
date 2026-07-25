@@ -1,48 +1,22 @@
 const BOARD_SIZE = 8;
-
 const POINTS_PER_BLOCK = 10;
 
-const gameBoard =
-    document.getElementById(
-        "gameBoard"
-    );
-
-const pieceContainer =
-    document.getElementById(
-        "pieceContainer"
-    );
-
-const scoreDisplay =
-    document.getElementById(
-        "score"
-    );
-
-const comboDisplay =
-    document.getElementById(
-        "combo"
-    );
-
-const gameMessage =
-    document.getElementById(
-        "gameMessage"
-    );
-
-const restartButton =
-    document.getElementById(
-        "restartButton"
-    );
+const gameBoard = document.getElementById("gameBoard");
+const pieceContainer = document.getElementById("pieceContainer");
+const scoreDisplay = document.getElementById("score");
+const comboDisplay = document.getElementById("combo");
+const gameMessage = document.getElementById("gameMessage");
+const restartButton = document.getElementById("restartButton");
 
 let board = [];
-
 let score = 0;
-
 let combo = 0;
-
 let placementsWithoutClear = 0;
-
-let selectedPiece = null;
-
 let pieces = [];
+
+let draggedPiece = null;
+let draggedElement = null;
+let previewCells = [];
 
 
 // =========================
@@ -103,7 +77,7 @@ const SHAPES = [
         [1]
     ],
 
-    // L shape
+    // L
     [
         [1, 0],
         [1, 0],
@@ -117,25 +91,25 @@ const SHAPES = [
         [1, 1]
     ],
 
-    // Another L
+    // L sideways
     [
         [1, 1, 1],
         [1, 0, 0]
     ],
 
-    // Reverse L
+    // Reverse L sideways
     [
         [1, 1, 1],
         [0, 0, 1]
     ],
 
-    // T shape
+    // T
     [
         [1, 1, 1],
         [0, 1, 0]
     ],
 
-    // T shape rotated
+    // Vertical T
     [
         [0, 1],
         [1, 1],
@@ -159,7 +133,11 @@ function startGame() {
 
     placementsWithoutClear = 0;
 
-    selectedPiece = null;
+    draggedPiece = null;
+
+    draggedElement = null;
+
+    clearPreview();
 
     for (
         let row = 0;
@@ -188,7 +166,7 @@ function startGame() {
     generatePieces();
 
     gameMessage.textContent =
-        "Choose a block 💕";
+        "Drag a block onto the board 💕";
 
 }
 
@@ -214,33 +192,15 @@ function createBoard() {
         ) {
 
             const cell =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
-            cell.classList.add(
-                "board-cell"
-            );
+            cell.classList.add("board-cell");
 
             cell.dataset.row = row;
 
             cell.dataset.col = col;
 
-            cell.addEventListener(
-                "click",
-                function() {
-
-                    placePiece(
-                        row,
-                        col
-                    );
-
-                }
-            );
-
-            gameBoard.appendChild(
-                cell
-            );
+            gameBoard.appendChild(cell);
 
         }
 
@@ -250,7 +210,7 @@ function createBoard() {
 
 
 // =========================
-// GENERATE 3 PIECES
+// GENERATE PIECES
 // =========================
 
 function generatePieces() {
@@ -275,11 +235,9 @@ function generatePieces() {
 
         const piece = {
 
-            shape:
-                randomShape,
+            shape: randomShape,
 
-            id:
-                i
+            id: i
 
         };
 
@@ -299,13 +257,9 @@ function generatePieces() {
 function displayPiece(piece) {
 
     const pieceElement =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
-    pieceElement.classList.add(
-        "piece"
-    );
+    pieceElement.classList.add("piece");
 
     pieceElement.style.gridTemplateColumns =
         `repeat(${piece.shape[0].length}, 20px)`;
@@ -317,11 +271,11 @@ function displayPiece(piece) {
                 function(cell) {
 
                     const block =
-                        document.createElement(
-                            "div"
-                        );
+                        document.createElement("div");
 
-                    if (cell === 1) {
+                    if (
+                        cell === 1
+                    ) {
 
                         block.classList.add(
                             "piece-cell"
@@ -329,42 +283,26 @@ function displayPiece(piece) {
 
                     }
 
-                    pieceElement.appendChild(
-                        block
-                    );
+                    pieceElement.appendChild(block);
 
                 }
+
             );
 
         }
+
     );
 
+    // POINTER DOWN
     pieceElement.addEventListener(
-        "click",
-        function() {
+        "pointerdown",
+        function(event) {
 
-            selectedPiece = piece;
-
-            document
-                .querySelectorAll(
-                    ".piece"
-                )
-                .forEach(
-                    element => {
-
-                        element.classList.remove(
-                            "selected"
-                        );
-
-                    }
-                );
-
-            pieceElement.classList.add(
-                "selected"
+            startDrag(
+                event,
+                piece,
+                pieceElement
             );
-
-            gameMessage.textContent =
-                "Now choose where to place it 💕";
 
         }
     );
@@ -377,27 +315,326 @@ function displayPiece(piece) {
 
 
 // =========================
-// PLACE PIECE
+// START DRAGGING
 // =========================
 
-function placePiece(
+function startDrag(
+    event,
+    piece,
+    element
+) {
+
+    event.preventDefault();
+
+    draggedPiece = piece;
+
+    draggedElement = element;
+
+    draggedElement.classList.add(
+        "dragging"
+    );
+
+    draggedElement.setPointerCapture(
+        event.pointerId
+    );
+
+    gameMessage.textContent =
+        "Move the block onto the board 💕";
+
+    updateDragPosition(event);
+
+}
+
+
+// =========================
+// MOVE DRAGGED PIECE
+// =========================
+
+document.addEventListener(
+    "pointermove",
+    function(event) {
+
+        if (
+            !draggedPiece
+        ) {
+
+            return;
+
+        }
+
+        updateDragPosition(event);
+
+    }
+);
+
+
+// =========================
+// UPDATE DRAG POSITION
+// =========================
+
+function updateDragPosition(event) {
+
+    const boardRect =
+        gameBoard.getBoundingClientRect();
+
+    const cellWidth =
+        boardRect.width / BOARD_SIZE;
+
+    const cellHeight =
+        boardRect.height / BOARD_SIZE;
+
+    const relativeX =
+        event.clientX -
+        boardRect.left;
+
+    const relativeY =
+        event.clientY -
+        boardRect.top;
+
+    const col =
+        Math.floor(
+            relativeX /
+            cellWidth
+        );
+
+    const row =
+        Math.floor(
+            relativeY /
+            cellHeight
+        );
+
+    if (
+        row < 0 ||
+        col < 0 ||
+        row >= BOARD_SIZE ||
+        col >= BOARD_SIZE
+    ) {
+
+        clearPreview();
+
+        return;
+
+    }
+
+    showPreview(
+        row,
+        col
+    );
+
+}
+
+
+// =========================
+// RELEASE BLOCK
+// =========================
+
+document.addEventListener(
+    "pointerup",
+    function() {
+
+        if (
+            !draggedPiece
+        ) {
+
+            return;
+
+        }
+
+        const target =
+            getPreviewPosition();
+
+        if (
+            target &&
+            canPlace(
+                draggedPiece.shape,
+                target.row,
+                target.col
+            )
+        ) {
+
+            placePiece(
+                target.row,
+                target.col,
+                draggedPiece
+            );
+
+        } else {
+
+            gameMessage.textContent =
+                "That block cannot fit there 💔";
+
+        }
+
+        if (
+            draggedElement
+        ) {
+
+            draggedElement.classList.remove(
+                "dragging"
+            );
+
+        }
+
+        draggedPiece = null;
+
+        draggedElement = null;
+
+        clearPreview();
+
+    }
+);
+
+
+// =========================
+// PREVIEW
+// =========================
+
+function showPreview(
     startRow,
     startCol
 ) {
 
-    if (
-        !selectedPiece
-    ) {
+    clearPreview();
 
-        gameMessage.textContent =
-            "Choose a block first 💕";
+    if (
+        !draggedPiece
+    ) {
 
         return;
 
     }
 
     const shape =
-        selectedPiece.shape;
+        draggedPiece.shape;
+
+    const valid =
+        canPlace(
+            shape,
+            startRow,
+            startCol
+        );
+
+    for (
+        let row = 0;
+        row < shape.length;
+        row++
+    ) {
+
+        for (
+            let col = 0;
+            col < shape[row].length;
+            col++
+        ) {
+
+            if (
+                shape[row][col] !== 1
+            ) {
+
+                continue;
+
+            }
+
+            const boardRow =
+                startRow + row;
+
+            const boardCol =
+                startCol + col;
+
+            if (
+                boardRow >= BOARD_SIZE ||
+                boardCol >= BOARD_SIZE
+            ) {
+
+                continue;
+
+            }
+
+            const cell =
+                document.querySelector(
+                    `.board-cell[data-row="${boardRow}"][data-col="${boardCol}"]`
+                );
+
+            if (
+                cell
+            ) {
+
+                cell.classList.add(
+                    valid
+                        ? "preview"
+                        : "invalid-preview"
+                );
+
+                previewCells.push(
+                    cell
+                );
+
+            }
+
+        }
+
+    }
+
+    lastPreviewPosition = {
+        row: startRow,
+        col: startCol
+    };
+
+}
+
+
+// =========================
+// PREVIEW POSITION
+// =========================
+
+let lastPreviewPosition = null;
+
+function getPreviewPosition() {
+
+    return lastPreviewPosition;
+
+}
+
+
+// =========================
+// CLEAR PREVIEW
+// =========================
+
+function clearPreview() {
+
+    previewCells.forEach(
+        function(cell) {
+
+            cell.classList.remove(
+                "preview"
+            );
+
+            cell.classList.remove(
+                "invalid-preview"
+            );
+
+        }
+
+    );
+
+    previewCells = [];
+
+    lastPreviewPosition = null;
+
+}
+
+
+// =========================
+// PLACE PIECE
+// =========================
+
+function placePiece(
+    startRow,
+    startCol,
+    piece
+) {
+
+    const shape =
+        piece.shape;
 
     if (
         !canPlace(
@@ -406,9 +643,6 @@ function placePiece(
             startCol
         )
     ) {
-
-        gameMessage.textContent =
-            "That block cannot fit there 💔";
 
         return;
 
@@ -446,27 +680,19 @@ function placePiece(
 
     }
 
-
-    // Placement points
     score +=
         blockCount *
         POINTS_PER_BLOCK;
 
-
-    // Remove selected piece
     pieces =
         pieces.filter(
-            piece =>
-                piece.id !==
-                selectedPiece.id
+            currentPiece =>
+                currentPiece.id !==
+                piece.id
         );
-
-    selectedPiece = null;
-
 
     const clearedLines =
         clearLines();
-
 
     if (
         clearedLines > 0
@@ -478,10 +704,11 @@ function placePiece(
 
         const clearPoints =
             clearedLines *
-            8 *
+            BOARD_SIZE *
             combo;
 
-        score += clearPoints;
+        score +=
+            clearPoints;
 
         gameMessage.textContent =
             `Amazing! ${clearedLines} line(s) cleared 🔥 Combo ${combo}`;
@@ -505,11 +732,9 @@ function placePiece(
 
     }
 
-
     updateScore();
 
     renderBoard();
-
 
     if (
         pieces.length === 0
@@ -518,7 +743,6 @@ function placePiece(
         generatePieces();
 
     }
-
 
     if (
         !hasPossibleMove()
@@ -533,7 +757,7 @@ function placePiece(
 
 
 // =========================
-// CAN PLACE?
+// CAN PLACE
 // =========================
 
 function canPlace(
@@ -568,8 +792,9 @@ function canPlace(
             const boardCol =
                 startCol + col;
 
-
             if (
+                boardRow < 0 ||
+                boardCol < 0 ||
                 boardRow >= BOARD_SIZE ||
                 boardCol >= BOARD_SIZE
             ) {
@@ -578,9 +803,12 @@ function canPlace(
 
             }
 
-
             if (
-                board[boardRow][boardCol] === 1
+                board[
+                    boardRow
+                ][
+                    boardCol
+                ] === 1
             ) {
 
                 return false;
@@ -604,7 +832,6 @@ function clearLines() {
 
     let linesCleared = 0;
 
-
     for (
         let row = 0;
         row < BOARD_SIZE;
@@ -613,7 +840,8 @@ function clearLines() {
 
         if (
             board[row].every(
-                cell => cell === 1
+                cell =>
+                    cell === 1
             )
         ) {
 
@@ -627,7 +855,6 @@ function clearLines() {
         }
 
     }
-
 
     for (
         let col = 0;
@@ -654,7 +881,6 @@ function clearLines() {
             }
 
         }
-
 
         if (
             fullColumn
@@ -722,6 +948,7 @@ function renderBoard() {
             }
 
         }
+
     );
 
 }
@@ -743,7 +970,7 @@ function updateScore() {
 
 
 // =========================
-// CHECK MOVES
+// CHECK POSSIBLE MOVE
 // =========================
 
 function hasPossibleMove() {
@@ -758,11 +985,13 @@ function hasPossibleMove() {
             row < BOARD_SIZE;
             row++
         ) {
+
             for (
                 let col = 0;
                 col < BOARD_SIZE;
                 col++
             ) {
+
                 if (
                     canPlace(
                         piece.shape,
@@ -770,13 +999,22 @@ function hasPossibleMove() {
                         col
                     )
                 ) {
+
                     return true;
+
                 }
+
             }
+
         }
+
     }
+
     return false;
+
 }
+
+
 // =========================
 // RESTART
 // =========================
@@ -785,5 +1023,10 @@ restartButton.addEventListener(
     "click",
     startGame
 );
-// Start
+
+
+// =========================
+// START
+// =========================
+
 startGame();
