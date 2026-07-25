@@ -973,7 +973,7 @@ function hasPossibleMove(){
             }
 
 
-        }
+        } 
 
 
     }
