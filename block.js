@@ -357,39 +357,46 @@ function startDragging(event, pieceElement, piece){
     if(gameOverState) return;
 
 
-    draggedPiece = piece;
+    const rect = pieceElement.getBoundingClientRect();
 
+
+    const x = event.clientX;
+    const y = event.clientY;
+
+
+    // find where player grabbed inside the piece
+    dragOffsetX =
+        Math.floor(
+            (x - rect.left) / 28
+        );
+
+
+    dragOffsetY =
+        Math.floor(
+            (y - rect.top) / 28
+        );
+
+    draggedPiece = piece;
 
     selectedPiece = piece;
 
-
-
     draggedElement =
         createDraggedPiece(piece);
-
-
 
     document.body.appendChild(
         draggedElement
     );
 
-
     moveDraggedPiece(event);
-
-
 
     pieceElement.classList.add(
         "dragging"
     );
 
-
-
     document.addEventListener(
         "pointermove",
         moveDraggedPiece
     );
-
-
     document.addEventListener(
         "pointerup",
         stopDragging,
@@ -399,7 +406,6 @@ function startDragging(event, pieceElement, piece){
     );
 
 }
-
 
 
 // =========================
