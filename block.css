@@ -32,11 +32,11 @@ body {
     animation:
         gradientShift 15s ease infinite;
 
-    font-family:
-        Georgia,
-        serif;
+    font-family: Georgia, serif;
 
     color: white;
+
+    overflow-x: hidden;
 
 }
 
@@ -83,173 +83,112 @@ h1 {
         'Dancing Script',
         cursive;
 
-    font-size:
-        2.8rem;
+    font-size: 2.8rem;
 
-    color:
-        #fa93c7;
+    color: #fa93c7;
 
-    margin-bottom:
-        5px;
+    margin-bottom: 5px;
 
 }
 
 .subtitle {
 
-    color:
-        #ffd700;
+    color: #ffd700;
 
-    font-style:
-        italic;
+    font-style: italic;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
 }
 
 .score-board {
 
-    display:
-        flex;
+    display: flex;
 
-    justify-content:
-        space-around;
+    justify-content: space-around;
 
-    gap:
-        15px;
+    gap: 15px;
 
-    margin-bottom:
-        20px;
+    margin-bottom: 20px;
 
 }
 
 .score-board div {
 
-    width:
-        45%;
+    width: 45%;
 
-    padding:
-        10px;
+    padding: 10px;
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.15
-        );
+        rgba(255, 255, 255, 0.15);
 
-    font-size:
-        14px;
+    font-size: 14px;
 
 }
 
 .score-board span {
 
-    display:
-        block;
+    display: block;
 
-    margin-top:
-        3px;
+    margin-top: 3px;
 
-    font-size:
-        24px;
+    font-size: 24px;
 
-    font-weight:
-        bold;
+    font-weight: bold;
 
-    color:
-        #ffd700;
+    color: #ffd700;
 
 }
 
 #gameBoard {
 
-    width:
-        100%;
+    width: 100%;
 
-    max-width:
-        400px;
+    max-width: 400px;
 
-    aspect-ratio:
-        1 / 1;
+    aspect-ratio: 1 / 1;
 
-    margin:
-        auto;
+    margin: auto;
 
-    display:
-        grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(
-            8,
-            1fr
-        );
+        repeat(8, 1fr);
 
-    gap:
-        4px;
+    gap: 4px;
 
-    padding:
-        6px;
+    padding: 6px;
 
     background:
-        rgba(
-            0,
-            0,
-            0,
-            0.3
-        );
+        rgba(0, 0, 0, 0.3);
 
-    border-radius:
-        12px;
+    border-radius: 12px;
 
 }
 
 .board-cell {
 
-    aspect-ratio:
-        1 / 1;
+    aspect-ratio: 1 / 1;
 
-    border-radius:
-        5px;
+    border-radius: 5px;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.08
-        );
+        rgba(255, 255, 255, 0.08);
 
     border:
         1px solid
-        rgba(
-            255,
-            255,
-            255,
-            0.08
-        );
+        rgba(255, 255, 255, 0.08);
 
-    cursor:
-        pointer;
-
-    transition:
-        0.15s;
+    cursor: pointer;
 
 }
 
 .board-cell:hover {
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.25
-        );
+        rgba(255, 255, 255, 0.25);
 
 }
 
@@ -260,348 +199,211 @@ h1 {
 
     box-shadow:
         0 0 8px
-        rgba(
-            250,
-            147,
-            199,
-            0.7
-        );
+        rgba(250, 147, 199, 0.7);
 
 }
 
 #gameMessage {
 
-    min-height:
-        24px;
+    min-height: 24px;
 
-    margin:
-        15px 0;
+    margin: 15px 0;
 
-    color:
-        #ffd700;
+    color: #ffd700;
 
-    font-style:
-        italic;
+    font-style: italic;
 
 }
 
 #pieceContainer {
 
-    min-height:
-        120px;
+    min-height: 120px;
 
-    display:
-        flex;
+    display: flex;
 
-    justify-content:
-        space-around;
+    justify-content: space-around;
 
-    align-items:
-        center;
+    align-items: center;
 
-    gap:
-        15px;
+    gap: 15px;
 
-    margin-top:
-        10px;
+    margin-top: 10px;
 
 }
 
 .piece {
 
-    display:
-        grid;
+    display: grid;
 
-    gap:
-        3px;
+    gap: 3px;
 
-    padding:
-        8px;
+    padding: 8px;
 
-    cursor:
-        grab;
+    cursor: grab;
 
-    touch-action:
-        none;
+    touch-action: none;
 
-    transition:
-        0.2s;
-
-}
-
-.piece:active {
-
-    cursor:
-        grabbing;
+    transition: 0.2s;
 
 }
 
 .piece:hover {
 
     transform:
-        scale(
-            1.1
-        );
-
-}
-
-.piece.selected {
-
-    transform:
-        scale(
-            1.15
-        );
-
-    filter:
-        drop-shadow(
-            0 0 8px
-            #ffd700
-        );
+        scale(1.1);
 
 }
 
 .piece.dragging {
 
-    opacity:
-        0.3;
+    opacity: 0.3;
 
 }
 
 .piece-cell {
 
-    width:
-        20px;
+    width: 20px;
 
-    height:
-        20px;
+    height: 20px;
 
-    border-radius:
-        4px;
+    border-radius: 4px;
 
     background:
         #fa93c7;
 
 }
 
-.empty-cell {
+.dragged-piece {
 
-    width:
-        20px;
+    position: fixed;
 
-    height:
-        20px;
+    z-index: 9999;
 
-    visibility:
-        hidden;
+    display: grid;
 
-}
+    gap: 3px;
 
-.drag-preview {
-
-    position:
-        fixed;
-
-    display:
-        grid;
-
-    gap:
-        3px;
-
-    pointer-events:
-        none;
+    pointer-events: none;
 
     transform:
-        translate(
-            -50%,
-            -50%
-        )
-        scale(
-            1.2
-        );
-
-    z-index:
-        9999;
-
-    opacity:
-        0.9;
+        translate(-50%, -50%);
 
 }
 
-.drag-preview .piece-cell {
+.dragged-piece-cell {
 
-    width:
-        20px;
+    width: 28px;
 
-    height:
-        20px;
+    height: 28px;
 
-    border-radius:
-        4px;
+    border-radius: 5px;
 
     background:
         #fa93c7;
 
     box-shadow:
         0 0 8px
-        rgba(
-            250,
-            147,
-            199,
-            0.8
-        );
+        rgba(250, 147, 199, 0.8);
 
 }
 
 button {
 
-    margin-top:
-        15px;
+    margin-top: 15px;
 
-    padding:
-        10px
-        20px;
+    padding: 10px 20px;
 
-    border:
-        none;
+    border: none;
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.3
-        );
+        rgba(255, 255, 255, 0.3);
 
-    color:
-        white;
+    color: white;
 
     font-family:
-        Georgia,
-        serif;
+        Georgia, serif;
 
-    font-size:
-        16px;
+    font-size: 16px;
 
-    cursor:
-        pointer;
+    cursor: pointer;
 
-    transition:
-        0.3s;
+    transition: 0.3s;
 
 }
 
 button:hover {
 
     background:
-        rgba(
-            255,
-            255,
-            255,
-            0.6
-        );
+        rgba(255, 255, 255, 0.6);
 
-    color:
-        black;
+    color: black;
 
 }
 
 button:active {
 
     transform:
-        scale(
-            0.95
-        );
+        scale(0.95);
 
 }
 
 .back-button {
 
-    display:
-        block;
+    display: block;
 
-    margin:
-        20px
-        auto
-        0;
+    margin: 20px auto 0;
 
-    width:
-        fit-content;
+    width: fit-content;
 
-    padding:
-        10px
-        20px;
+    padding: 10px 20px;
 
-    border-radius:
-        10px;
+    border-radius: 10px;
 
     background:
-        rgba(
-            0,
-            0,
-            0,
-            0.25
-        );
+        rgba(0, 0, 0, 0.25);
 
-    color:
-        white;
+    color: white;
 
-    text-decoration:
-        none;
+    text-decoration: none;
 
 }
 
 .back-button:hover {
 
     background:
-        rgba(
-            0,
-            0,
-            0,
-            0.5
-        );
+        rgba(0, 0, 0, 0.5);
 
 }
 
-@media (
-    max-width:
-    500px
-) {
+@media (max-width: 500px) {
 
     .game-container {
 
-        padding:
-            18px;
+        padding: 18px;
 
     }
 
     h1 {
 
-        font-size:
-            2.4rem;
+        font-size: 2.4rem;
 
     }
 
-    .piece-cell,
-    .empty-cell {
+    .piece-cell {
 
-        width:
-            16px;
+        width: 16px;
 
-        height:
-            16px;
+        height: 16px;
 
     }
 
-    .drag-preview .piece-cell {
+    .dragged-piece-cell {
 
-        width:
-            16px;
+        width: 24px;
 
-        height:
-            16px;
+        height: 24px;
 
     }
 
