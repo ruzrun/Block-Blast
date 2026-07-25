@@ -26,6 +26,8 @@ let gameOverState = false;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 
+let ghostCells = [];
+
 // =========================
 // BLOCK SHAPES
 // =========================
@@ -354,6 +356,8 @@ function displayPiece(piece){
 
 function startDragging(event, pieceElement, piece){
 
+    clearGhost();
+
     if(gameOverState) return;
 
 
@@ -474,12 +478,56 @@ function moveDraggedPiece(event){
     if(!draggedElement) return;
 
 
+
     draggedElement.style.left =
         `${event.clientX - (dragOffsetX * 28)}px`;
 
 
     draggedElement.style.top =
         `${event.clientY - (dragOffsetY * 28)}px`;
+
+
+
+    const boardRect =
+        gameBoard.getBoundingClientRect();
+
+
+    const cellSize =
+        boardRect.width / BOARD_SIZE;
+
+
+
+    const col =
+        Math.floor(
+        (
+            event.clientX -
+            boardRect.left -
+            (dragOffsetX * cellSize)
+        )
+        /
+        cellSize
+        );
+
+
+
+    const row =
+        Math.floor(
+        (
+            event.clientY -
+            boardRect.top -
+            (dragOffsetY * cellSize)
+        )
+        /
+        cellSize
+        );
+
+
+
+    showGhost(
+        row,
+        col,
+        draggedPiece
+    );
 
 }
 
@@ -491,6 +539,7 @@ function moveDraggedPiece(event){
 
 function stopDragging(event){
 
+    clearGhost();
 
     if(!draggedPiece) return;
 
@@ -998,7 +1047,91 @@ function hasPossibleMove(){
 
 }
 
+function showGhost(row, col, piece){
 
+    clearGhost();
+
+
+    const shape = piece.shape;
+
+
+    for(
+        let r = 0;
+        r < shape.length;
+        r++
+    ){
+
+        for(
+            let c = 0;
+            c < shape[r].length;
+            c++
+        ){
+
+
+            if(shape[r][c] === 1){
+
+
+                const targetRow =
+                    row + r;
+
+
+                const targetCol =
+                    col + c;
+
+
+
+                if(
+                    targetRow >= 0 &&
+                    targetRow < BOARD_SIZE &&
+                    targetCol >= 0 &&
+                    targetCol < BOARD_SIZE
+                ){
+
+                    const index =
+                        targetRow * BOARD_SIZE +
+                        targetCol;
+
+
+                    const cell =
+                        document.querySelectorAll(
+                            ".board-cell"
+                        )[index];
+
+
+                    cell.classList.add(
+                        "ghost"
+                    );
+
+
+                    ghostCells.push(cell);
+
+                }
+
+
+            }
+
+        }
+
+    }
+
+}
+
+function clearGhost(){
+
+    ghostCells.forEach(
+        cell => {
+
+            cell.classList.remove(
+                "ghost"
+            );
+
+        }
+    );
+
+
+    ghostCells = [];
+
+}
 
 // =========================
 // RESTART
