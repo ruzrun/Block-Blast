@@ -8,17 +8,20 @@ const comboDisplay = document.getElementById("combo");
 const gameMessage = document.getElementById("gameMessage");
 const restartButton = document.getElementById("restartButton");
 
+
 let board = [];
 let score = 0;
 let combo = 0;
 let placementsWithoutClear = 0;
 
 let pieces = [];
+
 let selectedPiece = null;
-let gameOverState = false;
 
 let draggedPiece = null;
 let draggedElement = null;
+
+let gameOverState = false;
 
 
 // =========================
@@ -27,32 +30,32 @@ let draggedElement = null;
 
 const SHAPES = [
 
-    // 2x2 square
+    // 2x2
     [
-        [1, 1],
-        [1, 1]
+        [1,1],
+        [1,1]
     ],
 
-    // 3x3 square
+    // 3x3
     [
-        [1, 1, 1],
-        [1, 1, 1],
-        [1, 1, 1]
+        [1,1,1],
+        [1,1,1],
+        [1,1,1]
     ],
 
     // Horizontal 3
     [
-        [1, 1, 1]
+        [1,1,1]
     ],
 
     // Horizontal 4
     [
-        [1, 1, 1, 1]
+        [1,1,1,1]
     ],
 
     // Horizontal 5
     [
-        [1, 1, 1, 1, 1]
+        [1,1,1,1,1]
     ],
 
     // Vertical 3
@@ -79,43 +82,43 @@ const SHAPES = [
         [1]
     ],
 
-    // L
+    // L left
     [
-        [1, 0],
-        [1, 0],
-        [1, 1]
+        [1,0],
+        [1,0],
+        [1,1]
     ],
 
-    // Reverse L
+    // L right
     [
-        [0, 1],
-        [0, 1],
-        [1, 1]
+        [0,1],
+        [0,1],
+        [1,1]
     ],
 
     // L horizontal
     [
-        [1, 1, 1],
-        [1, 0, 0]
+        [1,1,1],
+        [1,0,0]
     ],
 
     // Reverse L horizontal
     [
-        [1, 1, 1],
-        [0, 0, 1]
+        [1,1,1],
+        [0,0,1]
     ],
 
     // T
     [
-        [1, 1, 1],
-        [0, 1, 0]
+        [1,1,1],
+        [0,1,0]
     ],
 
     // T vertical
     [
-        [0, 1],
-        [1, 1],
-        [0, 1]
+        [0,1],
+        [1,1],
+        [0,1]
     ]
 
 ];
@@ -125,35 +128,36 @@ const SHAPES = [
 // START GAME
 // =========================
 
-function startGame() {
+function startGame(){
 
     board = [];
 
     score = 0;
-
     combo = 0;
-
     placementsWithoutClear = 0;
+
+    pieces = [];
 
     selectedPiece = null;
 
     draggedPiece = null;
-
     draggedElement = null;
 
     gameOverState = false;
 
-    for (let row = 0; row < BOARD_SIZE; row++) {
 
-        board[row] = [];
+    for(let r = 0; r < BOARD_SIZE; r++){
 
-        for (let col = 0; col < BOARD_SIZE; col++) {
+        board[r] = [];
 
-            board[row][col] = 0;
+        for(let c = 0; c < BOARD_SIZE; c++){
+
+            board[r][c] = 0;
 
         }
 
     }
+
 
     updateScore();
 
@@ -161,33 +165,43 @@ function startGame() {
 
     generatePieces();
 
+
     gameMessage.textContent =
         "Drag a block onto the board 💕";
 
 }
 
 
+
 // =========================
 // CREATE BOARD
 // =========================
 
-function createBoard() {
+function createBoard(){
 
     gameBoard.innerHTML = "";
 
-    for (let row = 0; row < BOARD_SIZE; row++) {
 
-        for (let col = 0; col < BOARD_SIZE; col++) {
+    for(let r = 0; r < BOARD_SIZE; r++){
 
-            const cell = document.createElement("div");
+        for(let c = 0; c < BOARD_SIZE; c++){
 
-            cell.classList.add("board-cell");
 
-            cell.dataset.row = row;
+            const cell =
+                document.createElement("div");
 
-            cell.dataset.col = col;
+
+            cell.classList.add(
+                "board-cell"
+            );
+
+
+            cell.dataset.row = r;
+            cell.dataset.col = c;
+
 
             gameBoard.appendChild(cell);
+
 
         }
 
@@ -196,44 +210,49 @@ function createBoard() {
 }
 
 
+
 // =========================
 // GENERATE PIECES
 // =========================
 
-function generatePieces() {
+function generatePieces(){
+
 
     pieces = [];
 
     pieceContainer.innerHTML = "";
 
-   for (
-    let i = 0;
-    i < 3;
-    i++
-) {
 
-        const randomShape =
+    for(let i = 0; i < 3; i++){
+
+
+        const shape =
             SHAPES[
                 Math.floor(
                     Math.random() * SHAPES.length
                 )
             ];
 
+
         const piece = {
 
-            shape: randomShape,
+            id: Date.now() + i,
 
-            id: Date.now() + i
+            shape: shape
 
         };
 
+
         pieces.push(piece);
 
+
         displayPiece(piece);
+
 
     }
 
 }
+
 
 
 // =========================
@@ -242,132 +261,177 @@ function generatePieces() {
 
 function displayPiece(piece){
 
-    const pieceElement = document.createElement("div");
 
-    pieceElement.classList.add("piece");
-    // create blocks here
+    const pieceElement =
+        document.createElement("div");
 
-    // CLICK + DRAG HERE
+
+    pieceElement.classList.add(
+        "piece"
+    );
+
+
+    pieceElement.dataset.id =
+        piece.id;
+
+
+
+    pieceElement.style.gridTemplateColumns =
+        `repeat(${piece.shape[0].length},20px)`;
+
+
+
+    piece.shape.forEach(row => {
+
+
+        row.forEach(cell => {
+
+
+            const block =
+                document.createElement("div");
+
+
+            if(cell === 1){
+
+
+                block.classList.add(
+                    "piece-cell"
+                );
+
+
+            }
+
+
+            pieceElement.appendChild(
+                block
+            );
+
+
+        });
+
+
+    });
+
+
+
+    // EVERY PIECE CAN DRAG
+
     pieceElement.addEventListener(
         "pointerdown",
         function(event){
+
+
+            event.preventDefault();
+
+
             selectedPiece = piece;
-            startDragging(event);
+
+
+            startDragging(
+                event,
+                pieceElement,
+                piece
+            );
+
+
         }
     );
-    pieceContainer.appendChild(pieceElement);
-});
-    });
-
-    // Mouse + touch dragging
-    pieceElement.addEventListener(
-    "pointerdown",
-    function(event) {
-
-        event.preventDefault();
-
-        selectedPiece = piece;
 
 
-        document
-        .querySelectorAll(".piece")
-        .forEach(
-            element => {
-                element.classList.remove(
-                    "selected"
-                );
-            }
-        );
+
+    pieceContainer.appendChild(
+        pieceElement
+    );
 
 
-        pieceElement.classList.add(
-            "selected"
-        );
-
-
-        startDragging(event);
-
-    }
-);
+}
 
 // =========================
 // START DRAGGING
 // =========================
 
-function startDragging(event) {
+function startDragging(event, pieceElement, piece){
 
-    if (gameOverState) return;
+    if(gameOverState) return;
 
-    event.preventDefault();
-
-    const pieceElement =
-        event.currentTarget;
-
-    const pieceId =
-        Number(pieceElement.dataset.id);
-
-    const piece =
-        pieces.find(
-            p => p.id === pieceId
-        );
-
-    if (!piece) return;
 
     draggedPiece = piece;
 
+
     selectedPiece = piece;
+
+
 
     draggedElement =
         createDraggedPiece(piece);
+
+
 
     document.body.appendChild(
         draggedElement
     );
 
+
     moveDraggedPiece(event);
+
+
 
     pieceElement.classList.add(
         "dragging"
     );
+
+
 
     document.addEventListener(
         "pointermove",
         moveDraggedPiece
     );
 
+
     document.addEventListener(
         "pointerup",
         stopDragging,
-        { once: true }
+        {
+            once:true
+        }
     );
 
 }
 
 
+
 // =========================
-// CREATE DRAGGED PIECE
+// CREATE DRAG PREVIEW
 // =========================
 
-function createDraggedPiece(piece) {
+function createDraggedPiece(piece){
 
-    const dragElement =
+
+    const element =
         document.createElement("div");
 
-    dragElement.classList.add(
+
+    element.classList.add(
         "dragged-piece"
     );
 
-    dragElement.style.gridTemplateColumns =
-        `repeat(${piece.shape[0].length}, 28px)`;
+
+    element.style.gridTemplateColumns =
+        `repeat(${piece.shape[0].length},28px)`;
+
+
 
     piece.shape.forEach(row => {
 
+
         row.forEach(cell => {
+
 
             const block =
                 document.createElement("div");
 
-            if (cell === 1) {
+
+            if(cell === 1){
 
                 block.classList.add(
                     "dragged-piece-cell"
@@ -375,68 +439,110 @@ function createDraggedPiece(piece) {
 
             }
 
-            dragElement.appendChild(
+
+            element.appendChild(
                 block
             );
 
+
         });
+
 
     });
 
-    return dragElement;
+
+    return element;
 
 }
+
 
 
 // =========================
 // MOVE DRAGGED PIECE
 // =========================
 
-function moveDraggedPiece(event) {
+function moveDraggedPiece(event){
 
-    if (!draggedElement) return;
+
+    if(!draggedElement) return;
+
+
+    let x;
+    let y;
+
+
+    if(event.touches){
+
+        x = event.touches[0].clientX;
+        y = event.touches[0].clientY;
+
+    }
+    else{
+
+        x = event.clientX;
+        y = event.clientY;
+
+    }
+
+
 
     draggedElement.style.left =
-        `${event.clientX}px`;
+        x + "px";
+
 
     draggedElement.style.top =
-        `${event.clientY}px`;
+        y + "px";
 
 }
+
 
 
 // =========================
 // STOP DRAGGING
 // =========================
 
-function stopDragging(event) {
+function stopDragging(event){
 
-    if (!draggedPiece) return;
+
+    if(!draggedPiece) return;
+
+
 
     const boardRect =
         gameBoard.getBoundingClientRect();
 
+
+
     const cellSize =
         boardRect.width / BOARD_SIZE;
+
+
 
     const col =
         Math.floor(
             (event.clientX - boardRect.left)
-            / cellSize
+            /
+            cellSize
         );
+
+
 
     const row =
         Math.floor(
             (event.clientY - boardRect.top)
-            / cellSize
+            /
+            cellSize
         );
 
-    if (
+
+
+    if(
         row >= 0 &&
         row < BOARD_SIZE &&
         col >= 0 &&
         col < BOARD_SIZE
-    ) {
+    ){
+
 
         placePiece(
             row,
@@ -444,34 +550,33 @@ function stopDragging(event) {
             draggedPiece
         );
 
+
     }
 
-    if (draggedElement) {
+
+
+    if(draggedElement){
 
         draggedElement.remove();
 
     }
 
-    document
-        .querySelectorAll(".piece")
-        .forEach(piece => {
 
-            piece.classList.remove(
-                "dragging"
-            );
-
-        });
 
     draggedPiece = null;
 
     draggedElement = null;
+
+
 
     document.removeEventListener(
         "pointermove",
         moveDraggedPiece
     );
 
+
 }
+
 
 
 // =========================
@@ -482,117 +587,126 @@ function placePiece(
     startRow,
     startCol,
     piece
-) {
+){
 
-    if (!piece) return;
 
     const shape =
         piece.shape;
 
-    if (
+
+
+    if(
         !canPlace(
             shape,
             startRow,
             startCol
         )
-    ) {
+    ){
 
         gameMessage.textContent =
-            "That block cannot fit there 💔";
+            "Cannot place here 💔";
 
         return;
 
     }
 
+
+
     let blockCount = 0;
 
-    for (
-        let row = 0;
-        row < shape.length;
-        row++
-    ) {
 
-        for (
-            let col = 0;
-            col < shape[row].length;
-            col++
-        ) {
 
-            if (
-                shape[row][col] === 1
-            ) {
+    for(let r = 0; r < shape.length; r++){
 
-                board[
-                    startRow + row
-                ][
-                    startCol + col
-                ] = 1;
+
+        for(let c = 0; c < shape[r].length; c++){
+
+
+            if(shape[r][c] === 1){
+
+
+                board[startRow+r][startCol+c] = 1;
+
 
                 blockCount++;
 
+
             }
 
+
         }
+
 
     }
 
 
-    // Points for placing blocks
+
+    // Placement points
 
     score +=
         blockCount *
         POINTS_PER_BLOCK;
 
 
-    // Remove used piece
 
     pieces =
         pieces.filter(
             p =>
-                p.id !== piece.id
+            p.id !== piece.id
         );
 
 
-    const clearedLines =
+
+    const cleared =
         clearLines();
 
 
-    if (
-        clearedLines > 0
-    ) {
+
+    if(cleared > 0){
+
 
         combo++;
 
+
         placementsWithoutClear = 0;
 
-        const clearPoints =
-            clearedLines *
+
+
+        score +=
+            cleared *
             BOARD_SIZE *
             combo;
 
-        score += clearPoints;
+
 
         gameMessage.textContent =
-            `${clearedLines} line(s) cleared 🔥 Combo ${combo}`;
+            `${cleared} line cleared 🔥 Combo ${combo}`;
 
-    } else {
+
+    }
+    else{
+
 
         placementsWithoutClear++;
 
-        if (
-            placementsWithoutClear >= 3
-        ) {
+
+        if(placementsWithoutClear >= 3){
+
 
             combo = 0;
 
             placementsWithoutClear = 0;
 
+
             gameMessage.textContent =
                 "Combo lost 💔";
 
+
         }
 
+
     }
+
 
 
     updateScore();
@@ -600,149 +714,138 @@ function placePiece(
     renderBoard();
 
 
-    if (
-        pieces.length === 0
-    ) {
+
+    if(pieces.length === 0){
 
         generatePieces();
 
     }
 
 
-    if (
-        !hasPossibleMove()
-    ) {
+
+    if(!hasPossibleMove()){
+
 
         gameOverState = true;
 
+
         gameMessage.textContent =
-            `Game Over 💔 Final Score: ${score}`;
+        `Game Over 💔 Score: ${score}`;
+
 
     }
 
+
 }
+
 
 
 // =========================
 // CAN PLACE
 // =========================
 
-function canPlace(
-    shape,
-    startRow,
-    startCol
-) {
+function canPlace(shape,row,col){
 
-    for (
-        let row = 0;
-        row < shape.length;
-        row++
-    ) {
 
-        for (
-            let col = 0;
-            col < shape[row].length;
-            col++
-        ) {
+    for(let r = 0; r < shape.length; r++){
 
-            if (
-                shape[row][col] === 0
-            ) {
 
+        for(let c = 0; c < shape[r].length; c++){
+
+
+            if(shape[r][c] === 0)
                 continue;
 
-            }
-
-            const boardRow =
-                startRow + row;
-
-            const boardCol =
-                startCol + col;
 
 
-            if (
+            let boardRow =
+                row+r;
+
+
+            let boardCol =
+                col+c;
+
+
+
+            if(
                 boardRow >= BOARD_SIZE ||
                 boardCol >= BOARD_SIZE
-            ) {
+            ){
 
                 return false;
 
             }
 
 
-            if (
+
+            if(
                 board[boardRow][boardCol] === 1
-            ) {
+            ){
 
                 return false;
 
             }
+
 
         }
 
+
     }
+
 
     return true;
 
 }
 
 
+
 // =========================
-// CLEAR LINES
+// CLEAR ROW + COLUMN
 // =========================
 
-function clearLines() {
-
-    let linesCleared = 0;
+function clearLines(){
 
 
-    // Rows
+    let count = 0;
 
-    for (
-        let row = 0;
-        row < BOARD_SIZE;
-        row++
-    ) {
 
-        if (
-            board[row].every(
+
+    for(let r = 0; r < BOARD_SIZE; r++){
+
+
+        if(
+            board[r].every(
                 cell => cell === 1
             )
-        ) {
+        ){
 
-            board[row] =
-                Array(
-                    BOARD_SIZE
-                ).fill(0);
+            board[r] =
+            Array(BOARD_SIZE).fill(0);
 
-            linesCleared++;
+
+            count++;
 
         }
+
 
     }
 
 
-    // Columns
 
-    for (
-        let col = 0;
-        col < BOARD_SIZE;
-        col++
-    ) {
 
-        let fullColumn = true;
+    for(let c = 0; c < BOARD_SIZE; c++){
 
-        for (
-            let row = 0;
-            row < BOARD_SIZE;
-            row++
-        ) {
 
-            if (
-                board[row][col] === 0
-            ) {
+        let full = true;
 
-                fullColumn = false;
+
+
+        for(let r = 0; r < BOARD_SIZE; r++){
+
+
+            if(board[r][c] === 0){
+
+                full = false;
 
                 break;
 
@@ -751,134 +854,141 @@ function clearLines() {
         }
 
 
-        if (
-            fullColumn
-        ) {
 
-            for (
-                let row = 0;
-                row < BOARD_SIZE;
-                row++
-            ) {
+        if(full){
 
-                board[row][col] = 0;
+
+            for(let r = 0; r < BOARD_SIZE; r++){
+
+                board[r][c] = 0;
 
             }
 
-            linesCleared++;
+
+            count++;
 
         }
 
+
     }
 
-    return linesCleared;
+
+
+    return count;
 
 }
+
 
 
 // =========================
 // RENDER BOARD
 // =========================
 
-function renderBoard() {
+function renderBoard(){
 
-    const cells =
-        document.querySelectorAll(
-            ".board-cell"
-        );
 
-    cells.forEach(cell => {
+    document
+    .querySelectorAll(".board-cell")
+    .forEach(cell => {
 
-        const row =
-            Number(
-                cell.dataset.row
-            );
 
-        const col =
-            Number(
-                cell.dataset.col
-            );
+        const r =
+            Number(cell.dataset.row);
 
-        if (
-            board[row][col] === 1
-        ) {
+
+        const c =
+            Number(cell.dataset.col);
+
+
+
+        if(board[r][c] === 1){
+
 
             cell.classList.add(
                 "filled"
             );
 
-        } else {
+
+        }
+        else{
+
 
             cell.classList.remove(
                 "filled"
             );
 
+
         }
 
+
     });
+
 
 }
 
 
+
 // =========================
-// UPDATE SCORE
+// SCORE
 // =========================
 
-function updateScore() {
+function updateScore(){
+
 
     scoreDisplay.textContent =
         score;
 
+
     comboDisplay.textContent =
         combo;
+
 
 }
 
 
+
 // =========================
-// CHECK POSSIBLE MOVE
+// CHECK MOVE
 // =========================
 
-function hasPossibleMove() {
+function hasPossibleMove(){
 
-    for (
-        const piece
-        of pieces
-    ) {
 
-        for (
-            let row = 0;
-            row < BOARD_SIZE;
-            row++
-        ) {
+    for(const piece of pieces){
 
-            for (
-                let col = 0;
-                col < BOARD_SIZE;
-                col++
-            ) {
 
-                if (
+        for(let r = 0; r < BOARD_SIZE; r++){
+
+
+            for(let c = 0; c < BOARD_SIZE; c++){
+
+
+                if(
                     canPlace(
                         piece.shape,
-                        row,
-                        col
+                        r,
+                        c
                     )
-                ) {
+                ){
 
                     return true;
 
                 }
 
+
             }
+
 
         }
 
+
     }
+
 
     return false;
 
 }
+
 
 
 // =========================
@@ -891,6 +1001,7 @@ restartButton.addEventListener(
 );
 
 
-// START GAME
+
+// START
 
 startGame();
