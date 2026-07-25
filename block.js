@@ -28,6 +28,15 @@ let dragOffsetY = 0;
 
 let ghostCells = [];
 
+const backgroundMusic = new Audio("audio/game.mp3");
+
+backgroundMusic.loop = true; 
+backgroundMusic.volume = 0.25;
+
+backgroundMusic.play().catch(() => {
+    console.log("Autoplay blocked.");
+});
+
 // =========================
 // BLOCK SHAPE
 // =========================
