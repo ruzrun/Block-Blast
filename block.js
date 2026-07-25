@@ -1,5 +1,5 @@
 const BOARD_SIZE = 8;
-const POINTS_PER_BLOCK = 10;
+const POINTS_PER_BLOCK = 100;
 
 const gameBoard = document.getElementById("gameBoard");
 const pieceContainer = document.getElementById("pieceContainer");
