@@ -29,7 +29,7 @@ let dragOffsetY = 0;
 let ghostCells = [];
 
 // =========================
-// BLOCK SHAPES
+// BLOCK SHAPE
 // =========================
 
 const SHAPES = [
