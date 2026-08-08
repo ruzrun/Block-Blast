@@ -9,7 +9,7 @@ const gameMessage = document.getElementById("gameMessage");
 const restartButton = document.getElementById("restartButton");
 
 
-let board = [];
+let board = []; 
 let score = 0;
 let combo = 0;
 let placementsWithoutClear = 0;
