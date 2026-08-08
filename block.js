@@ -1095,74 +1095,52 @@ function hasPossibleMove(){
 
 }
 
-function showGhost(row, col, piece){
-
-    clearGhost();
+function showGhost(row, col, piece) {
 
 
-    const shape = piece.shape;
+clearGhost();
 
+// Only show ghost if the ENTIRE piece can fit
+if (!canPlace(piece.shape, row, col)) {
+    return;
+}
 
-    for(
-        let r = 0;
-        r < shape.length;
-        r++
-    ){
+const shape = piece.shape;
 
-        for(
-            let c = 0;
-            c < shape[r].length;
-            c++
-        ){
+for (let r = 0; r < shape.length; r++) {
 
+    for (let c = 0; c < shape[r].length; c++) {
 
-            if(shape[r][c] === 1){
+        if (shape[r][c] !== 1) {
+            continue;
+        }
 
+        const targetRow = row + r;
+        const targetCol = col + c;
 
-                const targetRow =
-                    row + r;
+        const index =
+            targetRow * BOARD_SIZE +
+            targetCol;
 
+        const cell =
+            document.querySelectorAll(
+                ".board-cell"
+            )[index];
 
-                const targetCol =
-                    col + c;
+        if (cell) {
 
+            cell.classList.add("ghost");
 
-
-                if(
-                    targetRow >= 0 &&
-                    targetRow < BOARD_SIZE &&
-                    targetCol >= 0 &&
-                    targetCol < BOARD_SIZE
-                ){
-
-                    const index =
-                        targetRow * BOARD_SIZE +
-                        targetCol;
-
-
-                    const cell =
-                        document.querySelectorAll(
-                            ".board-cell"
-                        )[index];
-
-
-                    cell.classList.add(
-                        "ghost"
-                    );
-
-
-                    ghostCells.push(cell);
-
-                }
-
-
-            }
+            ghostCells.push(cell);
 
         }
 
     }
 
 }
+
+}
+
 
 function clearGhost(){
 
