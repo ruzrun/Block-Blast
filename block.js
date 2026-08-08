@@ -30,11 +30,49 @@ let ghostCells = [];
 
 const backgroundMusic = new Audio("audio/game.mp3");
 
-backgroundMusic.loop = true; 
+backgroundMusic.loop = true;
 backgroundMusic.volume = 0.25;
 
-backgroundMusic.play().catch(() => {
-    console.log("Autoplay blocked.");
+let musicEnabled = true;
+
+const musicButton = document.getElementById("musicButton");
+
+// Try to start music
+backgroundMusic.play()
+.then(() => {
+musicButton.textContent = "🎵 Music On";
+})
+.catch(() => {
+console.log("Autoplay blocked.");
+musicButton.textContent = "🎵 Start Music";
+});
+
+// Music ON / OFF
+musicButton.addEventListener("click", function () {
+
+if (musicEnabled) {
+
+    // Turn music OFF
+    musicEnabled = false;
+    backgroundMusic.pause();
+
+    musicButton.textContent = "🔇 Music Off";
+
+} else {
+
+    // Turn music ON
+    musicEnabled = true;
+
+    backgroundMusic.play()
+        .then(() => {
+            musicButton.textContent = "🎵 Music On";
+        })
+        .catch(() => {
+            console.log("Music could not start.");
+        });
+
+}
+
 });
 
 // =========================
